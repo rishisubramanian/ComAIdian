@@ -1,0 +1,65 @@
+\documentclass[egregdoesnotlikesansseriftitles]{scrartcl}
+%\usepackage{cancel}
+\usepackage[headsepline]{scrlayer-scrpage}
+
+\usepackage[margin=0.75in]{geometry}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{float}
+%\usepackage{fancyhdr}
+
+
+\author{Blue Team}
+\date{\today}
+\title{The ComAIdian Project}
+\subtitle{ECS 171 - Machine Learning}
+
+\clearpairofpagestyles
+\ohead{Blue Team}
+\ihead{The ComAIdian Project}
+\ofoot{Page \pagemark}
+
+\begin{document}
+	% Title Page %
+	\maketitle
+	\thispagestyle{empty}
+	\setcounter{page}{0}
+	\tableofcontents
+	
+	\pagebreak
+	
+	\section{Introduction}
+	
+	
+	\section{Project Structure}
+		\subsection{Sub-Team Divisions}
+		
+		\subsection{Communication and Organization}
+		
+		\subsection{Platform and Implementation Strategies}
+		
+	\section{Data Summary} % UI Team
+
+	\section{Algorithms}
+		\subsection{Motivation, Selection, and Tuning} % ML team 
+		
+		\subsection{Implementation and Interface} % SE team
+
+	\section{Results and Discussion}
+		\subsection{ComAIdian App Demonstration}
+		
+		\subsection{What worked Well and Why}
+		
+		\subsection{What could have gone better and Why}
+		
+	\bibliography{ieeetr}
+	\bibliography{"../bib/sources"}
+	
+	
+	
+\end{document}

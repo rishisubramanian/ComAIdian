@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Setup path and print logo
+cd "${BASH_SOURCE%/*}" || exit
+cat ./logo
+/bin/echo
+cd ../
+ROOT=$(pwd)
+
+# Default options
+build=false
+
+# Get options
+# while getopts ":b" o; do
+#     case "${o}" in
+#         b)
+#             build=true # build the docker app before running
+#             ;;
+#     esac
+# done
+# shift $((OPTIND-1))
+
+# Formatting setup
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+cd ${ROOT}/tools
+
+# Kill webserver if open
+OLD_PID=$(sudo lsof -n -i4TCP:4000 | grep LISTEN | awk '{ print $2 }')
+if [ ! -z "$OLD_PID" ]; then
+    sudo kill $OLD_PID
+fi
+
+# Run webserver
+sudo ./deploy &
+
+# Stall until webserver is up
+while [ -z "$WEBSERVER_PID" ]; do
+    WEBSERVER_PID=$(sudo lsof -n -i4TCP:4000 | grep LISTEN | awk '{ print $2 }')
+done
+
+# Begin tests
+cd ${ROOT}/tests
+python front_end.py
+python back_end.py
+python machine_learning.py
+
+# Kill webserver
+/bin/echo -e "${RED}Testing Complete. Killing webserver${NC}"
+WEBSERVER_PID=$(sudo lsof -n -i4TCP:4000 | grep LISTEN | awk '{ print $2 }')
+sudo kill $WEBSERVER_PID

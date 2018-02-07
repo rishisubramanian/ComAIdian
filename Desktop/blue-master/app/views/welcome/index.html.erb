@@ -1,0 +1,24 @@
+<div class="homepage-hero-module">
+  <div class="video-container">
+    <div class="fade-in-text text-center text-thin title-container">
+      <h1 class="welcome-logo">Com<span class="logo-ai">AI</span>dian</h1>
+      <p>Joke Recommender - Created by <span class="bold" style="color: lightblue">BLUE</span> Team</p>
+      <% if user_signed_in? %>
+          <p class="welcome-see-jokes"><%= link_to('See Jokes Recommended For You', jokes_path, class: 'btn btn-primary btn-lg') %></p>
+      <% else %>
+          <p class="welcome-login-button"><%= link_to('Login to Your Account', new_user_session_path, class: 'btn btn-primary btn-lg') %></p>
+          <p class="welcome-sign-up"><%= link_to('Sign up', new_user_registration_path) %></p>
+      <% end %>
+    </div>
+    <div class="filter"></div>
+    <video autoplay loop class="fillWidth" poster="<%= path_to_image 'Love-Coding.jpg' %>">
+      <source src="https://storage.googleapis.com/coverr-main/mp4/Hello-World.mp4" type="video/mp4"/>
+      Your browser does not support the video tag.
+      <source src="https://storage.googleapis.com/coverr-main/mp4/Hello-World.mp4" type="video/webm"/>
+      Your browser does not support the video tag.
+    </video>
+    <div class="poster hidden">
+      <img src="<%= path_to_image 'Love-Coding.jpg' %>" alt="">
+    </div>
+  </div>
+</div>

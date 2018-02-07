@@ -1,0 +1,2 @@
+module JokeRatingsHelper
+end
