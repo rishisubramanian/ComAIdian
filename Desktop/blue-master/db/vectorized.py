@@ -10,7 +10,7 @@ def stringToBinaryDict (dictionary, array):
         alist[i] = 1
         dictionary[uniq_array[i]] = alist
     
-    return dictionary, uniq_array
+    return dictionary
 
 def vectorization(jokes, rater, rating):
     jokerater = pd.read_csv(rater, quotechar="@")
@@ -19,6 +19,9 @@ def vectorization(jokes, rater, rating):
     longDataVector = []
     featureCountVector = pd.Series()
     categoricalFeatures = jokerater.columns.values[2:10]
+    
+    age = jokerater["age"]
+    jokerater["age"] = age - age.min()
 
     for feature in categoricalFeatures:
         dictionary = {}
