@@ -25,7 +25,7 @@ def CreateMyStopWords ():
     stopword.append(u"'ll")
     return stopword
     
-def DataCleaning(csvfile, nrows):
+def DataCleaningForKaggleQA(csvfile, nrows):
     data = pd.read_csv(csvfile, nrows = nrows)
     stopword = CreateMyStopWords()
     porterStemmer = PorterStemmer()
@@ -37,17 +37,41 @@ def DataCleaning(csvfile, nrows):
             sentence = row[j].replace("’", "'").lower()
             for k in range(len(sentence)):
                 if (ord(sentence[k]) >= 128):
-                   sentence = sentence.replace(sentence[k], ' ')
+                   sentence = sentence.replace(sentence[k], '')
                     
             words = word_tokenize(sentence)
 
             cleanData = []
 
             for w in words:
-                if w not in stopword and w not in punctuation:
+                if w not in stopword and all(chr not in punctuation for chr in w):
                     cleanData.append(porterStemmer.stem(w))
             
             cleanSentence = ' '.join(cleanData)
             data.set_value(i, data.columns[j], cleanSentence)
     
+    return data
+
+def DataCleaningForKaggleSA(csvfile, nrows):
+    data = pd.read_csv(csvfile, nrows = nrows)
+    stopword = CreateMyStopWords()
+    porterStemmer = PorterStemmer()
+    
+    for i in range(len(data)):
+        row = data.iloc[i]
+        sentence = row["Joke"].replace("’", "'").lower()
+        for k in range(len(sentence)):
+            if (ord(sentence[k]) >= 128):
+                sentence = sentence.replace(sentence[k], '')
+                
+        words = word_tokenize(sentence)
+        cleanData = []
+        
+        for w in words:
+            if w not in stopword and all(chr not in punctuation for chr in w):
+                cleanData.append(porterStemmer.stem(w))
+            
+        cleanSentence = ' '.join(cleanData)
+        data.set_value(i, "Joke", cleanSentence)
+        
     return data
