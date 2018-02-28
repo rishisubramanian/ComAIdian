@@ -6,7 +6,7 @@ def stringToBinaryDict (dictionary, array):
     uniq_array = array.unique()
     arraySize = uniq_array.size # find out the unique size of an array
     for i in range(arraySize):
-        alist =  [0 for j in range(arraySize)]
+        alist =  [-1 for j in range(arraySize)]
         alist[i] = 1
         dictionary[uniq_array[i]] = alist
     
@@ -21,7 +21,7 @@ def vectorization(jokes, rater, rating):
     categoricalFeatures = jokerater.columns.values[2:10]
     
     age = jokerater["age"]
-    jokerater["age"] = age - age.min()
+    jokerater["age"] = (age - age.mean())/ age.std()
 
     for feature in categoricalFeatures:
         dictionary = {}
@@ -33,7 +33,7 @@ def vectorization(jokes, rater, rating):
         for j in range(2,10):
             array = np.append(array, dictionaries[j-2][row[j]])
 
-        array = np.append(array,row[10])
+        array = np.append(array, row[10])
         longDataVector.append(array)
     
     for i in range(2,11):
