@@ -25,6 +25,23 @@ def CreateMyStopWords ():
     stopword.append(u"'ll")
     return stopword
     
+def is_valid_hyphen_word(str):
+    flag = False
+    
+    if str[0].isalpha() and str[len(str) - 1].isalpha():
+        for chr in str:
+            if chr.isalpha():
+                flag = False
+            elif chr == "-":
+                if flag:
+                    return False
+                else:
+                    flag = True
+            else:
+                return False
+        return True
+    return False
+    
 def DataCleaningForKaggleQA(csvfile, nrows):
     data = pd.read_csv(csvfile, nrows = nrows)
     stopword = CreateMyStopWords()
@@ -35,17 +52,19 @@ def DataCleaningForKaggleQA(csvfile, nrows):
         
         for j in [1, 2]:
             sentence = row[j].replace("’", "'").lower()
-            for k in range(len(sentence)):
-                if (ord(sentence[k]) >= 128):
-                   sentence = sentence.replace(sentence[k], '')
+            for chr in sentence:
+                if (ord(chr) >= 128):
+                    sentence = sentence.replace(chr, '')
                     
+           # print j, sentence
             words = word_tokenize(sentence)
 
             cleanData = []
 
             for w in words:
-                if w not in stopword and all(chr not in punctuation for chr in w):
-                    cleanData.append(porterStemmer.stem(w))
+                if w not in stopword:
+                    if all(chr not in punctuation for chr in w) or is_valid_hyphen_word(w):
+                        cleanData.append(porterStemmer.stem(w))
             
             cleanSentence = ' '.join(cleanData)
             data.set_value(i, data.columns[j], cleanSentence)
@@ -60,18 +79,48 @@ def DataCleaningForKaggleSA(csvfile, nrows):
     for i in range(len(data)):
         row = data.iloc[i]
         sentence = row["Joke"].replace("’", "'").lower()
-        for k in range(len(sentence)):
-            if (ord(sentence[k]) >= 128):
-                sentence = sentence.replace(sentence[k], '')
+        for chr in sentence:
+            if (ord(chr) >= 128):
+                sentence = sentence.replace(chr, '')
                 
         words = word_tokenize(sentence)
         cleanData = []
         
         for w in words:
-            if w not in stopword and all(chr not in punctuation for chr in w):
-                cleanData.append(porterStemmer.stem(w))
+            if w not in stopword:
+                if all(chr not in punctuation for chr in w) or is_valid_hyphen_word(w):
+                    cleanData.append(porterStemmer.stem(w))
             
         cleanSentence = ' '.join(cleanData)
         data.set_value(i, "Joke", cleanSentence)
+        
+    return data
+    
+def DataCleaningForOtherSA(csvfile):
+    cols = ["question", "answer"]
+    data = pd.read_csv(csvfile, names = cols, sep = "?", lineterminator = "#")
+    data = data.drop(data.index[-1])
+    stopword = CreateMyStopWords()
+    porterStemmer = PorterStemmer()
+    
+    for i in range(len(data)):
+        row = data.iloc[i]
+        
+        for j in [0, 1]:
+            sentence = row[j].replace("’", "'").replace("‘", "'").lower()
+            for chr in sentence:
+                if (ord(chr) >= 128):
+                    sentence = sentence.replace(chr, '')
+
+            words = word_tokenize(sentence)
+            cleanData = []
+
+            for w in words:
+                if w not in stopword:
+                    if all(chr not in punctuation for chr in w) or is_valid_hyphen_word(w):
+                        cleanData.append(porterStemmer.stem(w))
+
+            cleanSentence = ' '.join(cleanData)
+            data.set_value(i, data.columns[j], cleanSentence)
         
     return data
