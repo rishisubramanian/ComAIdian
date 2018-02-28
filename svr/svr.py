@@ -1,7 +1,6 @@
 #TODO
-# 1) Implement checkKKT()
-# 2) Implement calculateEta() check formula (14) from http://cs229.stanford.edu/materials/smo.pdf
-# 3) Finish rest of SMO implementation
+# 1) Implement calculateEta() check formula (14) from http://cs229.stanford.edu/materials/smo.pdf
+# 2) Finish rest of SMO implementation, might want to break it into functions
 
 import numpy as np
 
@@ -20,8 +19,9 @@ class svr:
         code (int): Exception error code.
 
     """
-  def __init__(kernel = "linear", C = 1, epsilon = 0.1, poly_degree = 3, max_iter = 5000):
+  def __init__(kernel = "linear", tol = 0.01, C = 1, epsilon = 0.1, poly_degree = 3, max_iter = 5000):
     self._kernel = kernel
+    self._tol = tol
     self._C = C
     self._epsilon = epsilon
     self._poly_degree = poly_degree
@@ -59,13 +59,16 @@ class svr:
         alpha_i = self._alphas[i]
 
         #Check KKT condition
-        if(checkKKT(error, alpha_i)):
+        if(checkKKT(self._yTrain[i], error, alpha_i)):
           j = np.random.randint(0, len(self._xTrain))
 
           while(j == i):
             j = np.random.randint(0, len(self._xTrain))
 
             #TODO
+            #Save old ai  and aj, might need to take the _update_alpha_pair() from github into consideration 
+            #https://github.com/howardyclo/NTHU-Machine-Learning/blob/master/assignments/hw4-kernel-svr/svr.py
+            old_alpha_i = alpha_i
 
       if(num_changed_alpha == 0):
         iteration += 1
@@ -74,11 +77,15 @@ class svr:
         iteration = 0
 
   #TODO
-  def checkKKT(error, alpha_i):
+  def checkKKT(y_i, error, alpha_i):
     #Return True if KKT condition violated
-    
+    if(y_i * error < self._tol and alpha_i < self._C):
+      return True
+
+    if(y_i * error > self._tol and alpha_i > 0):
+      return True
+
     #Else return False
-    
     return False
 
   def calculateL(alpha_j, alpha_i):
