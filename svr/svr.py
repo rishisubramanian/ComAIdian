@@ -67,18 +67,18 @@ class SVR:
           while(j == i):
             j = np.random.randint(0, len(self._xTrain))
 
-            #Save old ai  and aj, might need to take the _update_alpha_pair() from github into consideration (link below)
-            #https://github.com/howardyclo/NTHU-Machine-Learning/blob/master/assignments/hw4-kernel-svr/svr.py
-            old_alpha_i = alpha_i
-            alpha_j = self._alphas[j]
-            old_alpha_j = alpha_j
+          #Save old ai  and aj, might need to take the _update_alpha_pair() from github into consideration (link below)
+          #https://github.com/howardyclo/NTHU-Machine-Learning/blob/master/assignments/hw4-kernel-svr/svr.py
+          old_alpha_i = alpha_i
+          alpha_j = self._alphas[j]
+          old_alpha_j = alpha_j
 
-            #Compute bounds for lagrange multiplier
-            L = calculateL(alpha_j, alpha_i)
-            H = calculateH(alpha_j, alpha_i)
+          #Compute bounds for lagrange multiplier
+          L = calculateL(alpha_j, alpha_i)
+          H = calculateH(alpha_j, alpha_i)
 
-            if(L == H):
-              continue
+          if(L == H):
+            continue
 
             #TODO
             #Calculate eta
