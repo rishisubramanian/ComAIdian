@@ -1,6 +1,8 @@
 #TODO
 # 1) Implement calculateEta() check formula (14) from http://cs229.stanford.edu/materials/smo.pdf
 # 2) Finish rest of SMO implementation, might want to break it into functions
+# 3) Finish score(), get R^2 score to determine how accurate the model is, check 
+# http://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html#sklearn.svm.SVR.score
 
 import numpy as np
 
@@ -65,10 +67,23 @@ class svr:
           while(j == i):
             j = np.random.randint(0, len(self._xTrain))
 
-            #TODO
-            #Save old ai  and aj, might need to take the _update_alpha_pair() from github into consideration 
+            #Save old ai  and aj, might need to take the _update_alpha_pair() from github into consideration (link below)
             #https://github.com/howardyclo/NTHU-Machine-Learning/blob/master/assignments/hw4-kernel-svr/svr.py
             old_alpha_i = alpha_i
+            alpha_j = self._alphas[j]
+            old_alpha_j = alpha_j
+
+            #Compute bounds for lagrange multiplier
+            L = calculateL(alpha_j, alpha_i)
+            H = calculateH(alpha_j, alpha_i)
+
+            if(L == H):
+              continue
+
+            #TODO
+            #Calculate eta
+            #If eta greater than or equal to 0, continue
+            #Get new aj
 
       if(num_changed_alpha == 0):
         iteration += 1
@@ -76,8 +91,10 @@ class svr:
       else:
         iteration = 0
 
-  #TODO
   def checkKKT(y_i, error, alpha_i):
+    """
+    """
+
     #Return True if KKT condition violated
     if(y_i * error < self._tol and alpha_i < self._C):
       return True
@@ -99,6 +116,9 @@ class svr:
     pass
 
   def predict(self, x):
+    """
+    """
+
     kernel = Kernel(self._kernel, self._poly_degree)
     kernelX = kernel.calculateKernel(self._xTrain, x)
 
@@ -111,7 +131,15 @@ class svr:
         return np.dot(self._alphas, kernelX) + self.b
 
   def calculateError(self, i):
+    """
+    """
+
     predictedY = self.predict(self.xTrain[i])
 
     return predictedY - self.yTrain[i]
+
+  #TODO
+  def score(self, xTest, yTest):
+    pass
+
 
