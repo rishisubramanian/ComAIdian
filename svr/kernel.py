@@ -1,5 +1,5 @@
-#TODO
-#1) Complete rbf_kernel function
+import numpy as np
+from numpy import linalg as LA
 
 class kernel:
 
@@ -21,7 +21,13 @@ class kernel:
     return np.dot(xTrain, x)
 
   def rbf_kernel(xTrain, x):
-    pass
+    if(xTrain.shape[0] == 1):
+      sqrt_norm = LA.norm(X - x)**2
+    # Multiple examples
+    elif(xTrain.shape[0] == 2):
+      sqrt_norm = LA.norm(X - x, axis=1)**2
+
+    return np.exp(-sqrt_norm / (2.0 * (self.rbf_sigma**2)))
 
   def poly_kernel(xTrain, x):
     return (1 + np.dot(xTrain, x))**self.poly_degree
