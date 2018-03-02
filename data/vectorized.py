@@ -19,13 +19,12 @@ def vectorization(jokes, rater, rating):
     longDataVector = []
     featureCountVector = pd.Series()
     categoricalFeatures = jokerater.columns.values[2:10]
-    
+    jokerater.set_value(jokerater[jokerater["gender"] == "Prefer not to say"].index.get_values()[0], "gender", "Male")    
     age = jokerater["age"]
     jokerater["age"] = (age - age.mean())/ age.std()
 
     for feature in categoricalFeatures:
-        dictionary = {}
-        dictionaries.append(stringToBinaryDict(dictionary, jokerater[feature]))
+        dictionaries.append(stringToBinaryDict(jokerater[feature]))
 
     for i in range(len(jokerater)):
         row = jokerater.iloc[i]
