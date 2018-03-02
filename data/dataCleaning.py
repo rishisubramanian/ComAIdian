@@ -96,7 +96,7 @@ def DataCleaningForKaggleSA(csvfile, nrows):
         
     return data
     
-def DataCleaningForOtherSA(csvfile):
+def DataCleaningForOtherQA(csvfile):
     cols = ["question", "answer"]
     data = pd.read_csv(csvfile, names = cols, sep = "?", lineterminator = "#")
     data = data.drop(data.index[-1])
