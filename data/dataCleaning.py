@@ -23,6 +23,10 @@ def CreateMyStopWords ():
     stopword.append(u"'re")
     stopword.append(u"cannot")
     stopword.append(u"'ll")
+    stopword.append(u"'ve")
+    stopword.append(u"'m")
+    stopword.append(u"could")
+    stopword.append(u"would")
     return stopword
     
 def is_valid_hyphen_word(str):
@@ -115,12 +119,18 @@ def DataCleaningForOtherQA(csvfile):
             words = word_tokenize(sentence)
             cleanData = []
 
-            for w in words:
-                if w not in stopword:
-                    if all(chr not in punctuation for chr in w) or is_valid_hyphen_word(w):
-                        cleanData.append(porterStemmer.stem(w))
+            for k in range(len(words)):
+                if k != 0 or (k == 0 and words[k] != "q" and words[k] != "a" and words[k] != "question" and words[k] != "answer"):
+                    w = words[k]
+                    if w not in stopword:
+                        if all(chr not in punctuation for chr in w) or is_valid_hyphen_word(w):
+                            cleanData.append(porterStemmer.stem(w))
 
             cleanSentence = ' '.join(cleanData)
             data.set_value(i, data.columns[j], cleanSentence)
         
     return data
+
+def generateCSV(dataframe, filename):
+    data = dataframe["question"] + " ; " + dataframe["answer"] + " ."
+    data.to_csv(filename, index = False)
