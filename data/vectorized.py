@@ -1,14 +1,19 @@
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 
-def stringToBinaryDict (dictionary, array):
+def stringToBinaryDict (array):
+    dictionary = {}
     uniq_array = array.unique()
     arraySize = uniq_array.size # find out the unique size of an array
-    for i in range(arraySize):
-        alist =  [-1 for j in range(arraySize)]
-        alist[i] = 1
-        dictionary[uniq_array[i]] = alist
+    
+    if arraySize > 2:
+        for i in range(arraySize):
+            alist =  [0 for j in range(arraySize)]
+            alist[i] = 1
+            dictionary[uniq_array[i]] = alist
+    elif arraySize == 2:
+        dictionary[uniq_array[0]] = 1
+        dictionary[uniq_array[1]] = -1
     
     return dictionary
 
