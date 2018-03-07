@@ -1,14 +1,19 @@
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 
-def stringToBinaryDict (dictionary, array):
+def stringToBinaryDict (array):
+    dictionary = {}
     uniq_array = array.unique()
     arraySize = uniq_array.size # find out the unique size of an array
-    for i in range(arraySize):
-        alist =  [-1 for j in range(arraySize)]
-        alist[i] = 1
-        dictionary[uniq_array[i]] = alist
+    
+    if arraySize > 2:
+        for i in range(arraySize):
+            alist =  [0 for j in range(arraySize)]
+            alist[i] = 1
+            dictionary[uniq_array[i]] = alist
+    elif arraySize == 2:
+        dictionary[uniq_array[0]] = 1
+        dictionary[uniq_array[1]] = -1
     
     return dictionary
 
@@ -19,13 +24,12 @@ def vectorization(jokes, rater, rating):
     longDataVector = []
     featureCountVector = pd.Series()
     categoricalFeatures = jokerater.columns.values[2:10]
-    
+    jokerater.set_value(jokerater[jokerater["gender"] == "Prefer not to say"].index.get_values()[0], "gender", "Male")    
     age = jokerater["age"]
     jokerater["age"] = (age - age.mean())/ age.std()
 
     for feature in categoricalFeatures:
-        dictionary = {}
-        dictionaries.append(stringToBinaryDict(dictionary, jokerater[feature]))
+        dictionaries.append(stringToBinaryDict(jokerater[feature]))
 
     for i in range(len(jokerater)):
         row = jokerater.iloc[i]
