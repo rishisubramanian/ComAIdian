@@ -6,6 +6,14 @@ use warnings;
 my $text = qq{Launch the application like so "jokeCleaner.pl jokeData.txt > outputJoke.csv"} . "\n\n\n";
 my $myTxtFile = $ARGV[0] or die $text; #input argument, bulk text file from pdf
 
+my $category = -1;
+my $categoryType = -1;
+
+
+#assign these 
+if ($ARGV[1]){$category = $ARGV[1];}
+if ($ARGV[2]){$categoryType = $ARGV[2];}
+
 open('FILE',"< $myTxtFile") or die "error creating output file" ; #open the fd or die
 
 
@@ -229,6 +237,12 @@ while(<FILE>)
 		s/q://g foreach (@doubleBufferStack);	
 		
 		print qq{"@bufferStack","@doubleBufferStack"}; 
+		if( $category ne -1 && $categoryType ne -1)
+		{
+			print qq{"$category","$categoryType"}; #this is to designate the type right here 
+			
+		}
+
 		#~ print ",";
 		#~ print ;
 		print "\n";
