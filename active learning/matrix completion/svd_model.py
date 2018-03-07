@@ -1,13 +1,32 @@
 from data_loader import load_ratings_data, create_matrix
 from model import power_method, get_prediction
-import math
+import numpy as np
 
-def remove_training_data(matrix, user_ids_to_remove=[], joke_ids_to_remove=[]):
-  # for all of the items to remove, save them, and set to 0
-  for user in user_ids_to_remove:
+def mean_squared_error(actual_vector, predicted_vector):
+  # compare actual vector and predicted vector
+  # mean squared error
+  mse = np.power(predicted_vector - actual_vector, 2)
+  mse = mse.sum() / predicted_vector.size
+  return mse
+
+def max_squared_error(actual_vector, predicted_vector):
+  # compare actual vector and predicted vector
+  # mean squared error
+  max_se = np.power(predicted_vector - actual_vector, 2)
+  max_se = max_se.max()
+  return max_se
+
+def remove_training_data(matrix, user_id_to_remove=-1, joke_ids_to_remove=[]):
+  if user_id_to_remove != -1:
+    # for all of the items to remove, save them, and set to 0
+    num_failed_jokes = 0
     for joke in joke_ids_to_remove:
-        matrix[user, joke] = 0
-
+      if(matrix[user_id_to_remove, joke] != 0):
+        matrix[user_id_to_remove, joke] = 0
+      else:
+        print("Failed to remove joke", joke)
+        num_failed_jokes += 1
+    print("Failures: ", num_failed_jokes)
 
 def train():
   # get data
@@ -20,7 +39,7 @@ def train():
   U, S, V = power_method(matrix, 100, k=5)
 
 
-def test(leave_one_out_user_id=[], leave_one_out_joke_ids=[]):
+def test(leave_one_out_user_id=-1, leave_one_out_joke_ids=[]):
   # get data
   ratings_data = load_ratings_data()
 
@@ -29,35 +48,29 @@ def test(leave_one_out_user_id=[], leave_one_out_joke_ids=[]):
   live_matrix = original_matrix.copy()
 
   remove_training_data(live_matrix,
-                       user_ids_to_remove=leave_one_out_user_id,
+                       user_id_to_remove=leave_one_out_user_id,
                        joke_ids_to_remove=leave_one_out_joke_ids)
 
   # decompose matrix
   U, S, V = power_method(live_matrix, number_of_iterations=150, k=5)
 
   # get predicted vector and actual vector
-  actual_vector = original_matrix[leave_one_out_user_id[0]].toarray()[0]
-  predicted_vector = get_prediction(leave_one_out_user_id[0], U, S, V)
+  actual_vector = original_matrix[leave_one_out_user_id].toarray()[0]
+  predicted_vector = get_prediction(leave_one_out_user_id, U, S, V)
 
-  # compare actual vector and predicted vector
-  # mean squared error
-  mse = 0
-  number_of_rated_items = 0
-  for joke in leave_one_out_joke_ids:
-    if(actual_vector[joke] != 0):
-      mse += math.pow((predicted_vector[joke] - actual_vector[joke]), 2)
-      number_of_rated_items += 1
-  if(number_of_rated_items > 0):
-    mse /= number_of_rated_items
-  else:
-    raise ValueError('No items in the testing set were rated yet.')
-
-  return mse
+  mse = mean_squared_error(actual_vector, predicted_vector)
+  max_se = max_squared_error(actual_vector, predicted_vector)
+  return mse, max_se
 
 
 if __name__ == '__main__':
   print("Testing...")
-  mse = test([5], [100, 200, 300, 400, 500, 600, 700])
+  """ because it's hard to hit jokes present in the db, this just generates 50 random entries
+      hit rate is about 10%, so this is leave 5 out
+      pretty hacky, but just for testing before real dataset
+  """
+  joke_ids = (350*np.random.randn(500) + 350).astype(int)
+  mse, max_se = test(leave_one_out_user_id=5, leave_one_out_joke_ids=joke_ids)
   print("Mean Squared Error:", mse)
-
+  print("Max Squared Error:", max_se)
 

@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy import sparse
+from sklearn.preprocessing import normalize
 
 """ directory containing ratings file """
 DATASET_DIRECTORY = "dataset"
@@ -18,6 +19,11 @@ def load_ratings_data():
     print("Dataframe loaded!")
   return ratings_df
 
+""" in-place row normalizes a given matrix """
+def row_normalize(matrix):
+  matrix_sums = matrix.sum(axis=1)
+  matrix = matrix / matrix_sums[:, np.newaxis]
+
 """ creates user, movie matrix from ratings dataframe """
 def create_matrix(ratings_df):
   #if(_DEBUG):
@@ -32,5 +38,6 @@ def create_matrix(ratings_df):
   values = np.array(ratings_df['rating'].values)
 
   matrix = sparse.csc_matrix((values, (rows, cols)))
+  matrix = normalize(matrix, norm='l1', axis=1)
 
   return matrix
