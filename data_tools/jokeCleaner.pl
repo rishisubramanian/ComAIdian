@@ -212,7 +212,7 @@ my ($rx) = map qr/(?:$_)/, join "|", map qr/\b\Q$_\E\b/, @stopList;
 #~ my $line = "the good bear a good one"; #debugging it
 #~ $line =~ ;
 
-print qq{"original","clean"}; print "\n"; 
+print qq{"original","clean","category","categoryType"}; print "\n"; 
 
 
 while(<FILE>)
@@ -239,7 +239,7 @@ while(<FILE>)
 		print qq{"@bufferStack","@doubleBufferStack"}; 
 		if( $category ne -1 && $categoryType ne -1)
 		{
-			print qq{"$category","$categoryType"}; #this is to designate the type right here 
+			print qq{,"$category","$categoryType"}; #this is to designate the type right here 
 			
 		}
 
