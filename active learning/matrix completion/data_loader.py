@@ -26,10 +26,6 @@ def row_normalize(matrix):
 
 """ creates user, movie matrix from ratings dataframe """
 def create_matrix(ratings_df):
-  #if(_DEBUG):
-  #  print("Number of Users:", num_users)
-  #  print("Number of Movies:", num_items)
-
   """ create user x movie matrix and populate with ratings """
   """ note: empty entries are populated with zeros """
 
