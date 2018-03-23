@@ -184,7 +184,7 @@ def subsample(dataset, ratio):
 # Make a prediction with a list of bagged trees
 def bagging_predict(trees, row):
     predictions = [predict(tree, row) for tree in trees]
-    return max(set(predictions), key=predictions.count)
+    return np.mean(sum(predictions)/len(predictions))
 
 # Random Forest Algorithm
 def random_forest(train, test, max_depth, min_size, sample_size, n_trees, n_features):
@@ -213,7 +213,7 @@ min_size = 1
 sample_size = 1.0
 n_features = 5#int((len(dataset[0])-1)/3)
 for n_trees in [1, 5, 10]:
-    scores = evaluate_algorithm(dataset, n_folds, max_depth, min_size, sample_size, n_trees, n_features)
+    actual, predicted = evaluate_algorithm(dataset, n_folds, max_depth, min_size, sample_size, n_trees, n_features)
     print('Trees: %d' % n_trees)
-    print('Scores: %s' % scores)
-    print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
+    for i in range(len(actual)):
+    print('Predicted: %.5f%% , Actual: %s' % (predicted[i], actual[i]))
